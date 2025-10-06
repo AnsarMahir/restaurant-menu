@@ -1,12 +1,18 @@
 package com.toticone.restuarant_menu.repository;
 
 import com.toticone.restuarant_menu.entity.BasicProduct;
+import com.toticone.restuarant_menu.enums.ExtraTypes;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 
-@Repository
-public interface BasicProductRepository extends JpaRepository<BasicProduct,Integer> {
+public interface BasicProductRepository extends JpaRepository<BasicProduct, Integer> {
     List<BasicProduct> findByType(int type);
+
+    @Query("SELECT p FROM BasicProduct p WHERE p.name LIKE %:name%")
+    List<BasicProduct> findByNameContaining(@Param("name") String name);
+
+    @Query("SELECT p FROM BasicProduct p JOIN p.extras e WHERE e.type = :extraType")
+    List<BasicProduct> findByExtraType(@Param("extraType") ExtraTypes extraType);
 }
