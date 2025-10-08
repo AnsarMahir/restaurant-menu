@@ -1,5 +1,6 @@
 package com.toticone.restuarant_menu.service.impl;
 
+import com.toticone.restuarant_menu.controller.WebSocketController;
 import com.toticone.restuarant_menu.dto.BasicProductDTO;
 import com.toticone.restuarant_menu.dto.ExtraDTO;
 import com.toticone.restuarant_menu.entity.BasicProduct;
@@ -22,6 +23,9 @@ public class BasicProductServiceImpl implements BasicProductService {
     private BasicProductRepository productRepository;
 
     @Autowired
+    private WebSocketController webSocketController;
+
+    @Autowired
     private ExtraRepository extraRepository;
 
     @Override
@@ -42,7 +46,9 @@ public class BasicProductServiceImpl implements BasicProductService {
     public BasicProductDTO createProduct(BasicProductDTO productDTO) {
         BasicProduct product = convertToEntity(productDTO);
         BasicProduct savedProduct = productRepository.save(product);
-        return convertToDTO(savedProduct);
+        BasicProductDTO result = convertToDTO(savedProduct);
+        webSocketController.sendProductUpdate(result);
+        return result;
     }
 
     @Override
@@ -56,7 +62,9 @@ public class BasicProductServiceImpl implements BasicProductService {
         existingProduct.setType(productDTO.getType());
 
         BasicProduct updatedProduct = productRepository.save(existingProduct);
-        return convertToDTO(updatedProduct);
+        BasicProductDTO result = convertToDTO(updatedProduct);
+        webSocketController.sendProductUpdate(result);
+        return result;
     }
 
     @Override
@@ -64,6 +72,7 @@ public class BasicProductServiceImpl implements BasicProductService {
         BasicProduct product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
         productRepository.delete(product);
+        webSocketController.sendProductDelete(id);
     }
 
     @Override
@@ -82,7 +91,9 @@ public class BasicProductServiceImpl implements BasicProductService {
 
         product.getExtras().add(extra);
         BasicProduct updatedProduct = productRepository.save(product);
-        return convertToDTO(updatedProduct);
+        BasicProductDTO result = convertToDTO(updatedProduct);
+        webSocketController.sendProductUpdate(result);
+        return result;
     }
 
     @Override
@@ -94,7 +105,9 @@ public class BasicProductServiceImpl implements BasicProductService {
 
         product.getExtras().remove(extra);
         BasicProduct updatedProduct = productRepository.save(product);
-        return convertToDTO(updatedProduct);
+        BasicProductDTO result = convertToDTO(updatedProduct);
+        webSocketController.sendProductUpdate(result);
+        return result;
     }
 
     // Helper methods for conversion
