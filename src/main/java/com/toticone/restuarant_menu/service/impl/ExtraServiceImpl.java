@@ -1,5 +1,6 @@
 package com.toticone.restuarant_menu.service.impl;
 
+import com.toticone.restuarant_menu.controller.WebSocketController;
 import com.toticone.restuarant_menu.dto.ExtraDTO;
 import com.toticone.restuarant_menu.entity.Extra;
 import com.toticone.restuarant_menu.enums.ExtraTypes;
@@ -16,6 +17,9 @@ public class ExtraServiceImpl implements ExtraService {
 
     @Autowired
     private ExtraRepository extraRepository;
+
+    @Autowired
+    private WebSocketController webSocketController;
 
     @Override
     public List<ExtraDTO> getAllExtras() {
@@ -35,6 +39,8 @@ public class ExtraServiceImpl implements ExtraService {
     public ExtraDTO createExtra(ExtraDTO extraDTO) {
         Extra extra = convertToEntity(extraDTO);
         Extra savedExtra = extraRepository.save(extra);
+        ExtraDTO result = convertToDTO(savedExtra);
+        webSocketController.sendExtraUpdate(result);
         return convertToDTO(savedExtra);
     }
 
@@ -47,7 +53,10 @@ public class ExtraServiceImpl implements ExtraService {
         existingExtra.setType(extraDTO.getType());
 
         Extra updatedExtra = extraRepository.save(existingExtra);
-        return convertToDTO(updatedExtra);
+        ExtraDTO result = convertToDTO(updatedExtra);
+        webSocketController.sendExtraUpdate(result);
+
+        return result;
     }
 
     @Override
@@ -55,6 +64,7 @@ public class ExtraServiceImpl implements ExtraService {
         Extra extra = extraRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Extra not found with id: " + id));
         extraRepository.delete(extra);
+        webSocketController.sendExtraDelete(id);
     }
 
     @Override

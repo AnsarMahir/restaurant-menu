@@ -2,6 +2,7 @@ package com.toticone.restuarant_menu.controller;
 
 import com.toticone.restuarant_menu.dto.BasicProductDTO;
 import com.toticone.restuarant_menu.service.BasicProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class BasicProductController {
     }
 
     @PostMapping
-    public ResponseEntity<BasicProductDTO> createProduct(@RequestBody BasicProductDTO productDTO) {
+    public ResponseEntity<BasicProductDTO> createProduct(@RequestBody @Valid BasicProductDTO productDTO) {
         return ResponseEntity.ok(productService.createProduct(productDTO));
     }
 
