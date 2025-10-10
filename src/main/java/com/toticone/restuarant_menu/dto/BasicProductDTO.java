@@ -9,6 +9,7 @@ import java.util.List;
 public class BasicProductDTO {
     private int id;
     private String name;
+    private String category;
     private String description;
     private double price;
     private int type;

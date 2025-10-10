@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface ExtraRepository extends JpaRepository<Extra,Integer> {
     List<Extra> findByType(ExtraTypes type);
@@ -16,4 +18,5 @@ public interface ExtraRepository extends JpaRepository<Extra,Integer> {
     @Query("SELECT e FROM Extra e WHERE e.name LIKE %:name%")
     List<Extra> findByNameContaining(@Param("name") String name);
 
+    Optional<Extra> findByName(String name);
 }

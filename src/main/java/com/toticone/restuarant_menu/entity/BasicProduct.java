@@ -22,6 +22,7 @@ public class BasicProduct {
     @NotBlank
     private String name;
     private String description;
+    private String category;
     @NotNull
     private double price;
     private int type;

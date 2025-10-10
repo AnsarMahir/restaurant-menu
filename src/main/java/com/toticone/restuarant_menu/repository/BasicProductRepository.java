@@ -15,4 +15,6 @@ public interface BasicProductRepository extends JpaRepository<BasicProduct, Inte
 
     @Query("SELECT p FROM BasicProduct p JOIN p.extras e WHERE e.type = :extraType")
     List<BasicProduct> findByExtraType(@Param("extraType") ExtraTypes extraType);
+
+    List<BasicProduct> findByCategory(String category);
 }

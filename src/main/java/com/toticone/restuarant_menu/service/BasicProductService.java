@@ -13,4 +13,5 @@ public interface BasicProductService {
     List<BasicProductDTO> getProductsByType(int type);
     BasicProductDTO addExtraToProduct(int productId, int extraId);
     BasicProductDTO removeExtraFromProduct(int productId, int extraId);
+    List<BasicProductDTO> getProductsByCategory(String category);
 }
