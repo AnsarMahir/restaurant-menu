@@ -48,6 +48,11 @@ public class BasicProductController {
         return ResponseEntity.ok(productService.getProductsByType(type));
     }
 
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<BasicProductDTO>> getProductsByCategory(@PathVariable String category) {
+        return ResponseEntity.ok(productService.getProductsByCategory(category));
+    }
+
     @PostMapping("/{productId}/extras/{extraId}")
     public ResponseEntity<BasicProductDTO> addExtraToProduct(@PathVariable int productId, @PathVariable int extraId) {
         return ResponseEntity.ok(productService.addExtraToProduct(productId, extraId));

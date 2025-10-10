@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,7 +47,13 @@ public class BasicProductServiceImpl implements BasicProductService {
     @Override
     public BasicProductDTO createProduct(BasicProductDTO productDTO) {
         BasicProduct product = convertToEntity(productDTO);
+        for (ExtraDTO extraDTO : productDTO.getExtras()) {
+            Extra extra = convertExtraDTOToExtra(extraDTO);
+            Extra savedextra = extraRepository.save(extra);
+            product.addExtra(savedextra);
+        }
         BasicProduct savedProduct = productRepository.save(product);
+
         BasicProductDTO result = convertToDTO(savedProduct);
         webSocketController.sendProductUpdate(result);
         return result;
@@ -83,6 +91,13 @@ public class BasicProductServiceImpl implements BasicProductService {
     }
 
     @Override
+    public List<BasicProductDTO> getProductsByCategory(String category) {
+        return productRepository.findByCategory(category).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public BasicProductDTO addExtraToProduct(int productId, int extraId) {
         BasicProduct product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -114,6 +129,7 @@ public class BasicProductServiceImpl implements BasicProductService {
     private BasicProductDTO convertToDTO(BasicProduct product) {
         BasicProductDTO dto = new BasicProductDTO();
         dto.setId(product.getId());
+        dto.setCategory(product.getCategory());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
@@ -133,9 +149,17 @@ public class BasicProductServiceImpl implements BasicProductService {
     private BasicProduct convertToEntity(BasicProductDTO dto) {
         BasicProduct product = new BasicProduct();
         product.setName(dto.getName());
+        product.setCategory(dto.getCategory());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setType(dto.getType());
+        List<Extra> extra = new ArrayList<>();
+        for (ExtraDTO extraDTO : dto.getExtras()) {
+            Extra result = new Extra();
+            result.setName(extraDTO.getName());
+            result.setType(extraDTO.getType());
+        }
+        product.setExtras(extra);
         return product;
     }
 
@@ -146,4 +170,12 @@ public class BasicProductServiceImpl implements BasicProductService {
         dto.setType(extra.getType());
         return dto;
     }
+
+    private Extra convertExtraDTOToExtra(ExtraDTO extraDTO) {
+        Extra extra = new Extra();
+        extra.setType(extraDTO.getType());
+        extra.setName(extraDTO.getName());
+        return extra;
+    }
+
 }
