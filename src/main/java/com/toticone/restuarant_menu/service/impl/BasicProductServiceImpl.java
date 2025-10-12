@@ -47,10 +47,12 @@ public class BasicProductServiceImpl implements BasicProductService {
     @Override
     public BasicProductDTO createProduct(BasicProductDTO productDTO) {
         BasicProduct product = convertToEntity(productDTO);
-        for (ExtraDTO extraDTO : productDTO.getExtras()) {
-            Extra extra = convertExtraDTOToExtra(extraDTO);
-            Extra savedextra = extraRepository.save(extra);
-            product.addExtra(savedextra);
+        if(productDTO.getExtras() != null) {
+            for (ExtraDTO extraDTO : productDTO.getExtras()) {
+                Extra extra = convertExtraDTOToExtra(extraDTO);
+                Extra savedextra = extraRepository.save(extra);
+                product.addExtra(savedextra);
+            }
         }
         BasicProduct savedProduct = productRepository.save(product);
 
@@ -154,12 +156,14 @@ public class BasicProductServiceImpl implements BasicProductService {
         product.setPrice(dto.getPrice());
         product.setType(dto.getType());
         List<Extra> extra = new ArrayList<>();
-        for (ExtraDTO extraDTO : dto.getExtras()) {
-            Extra result = new Extra();
-            result.setName(extraDTO.getName());
-            result.setType(extraDTO.getType());
+        if (dto.getExtras() != null) {
+            for (ExtraDTO extraDTO : dto.getExtras()) {
+                Extra result = new Extra();
+                result.setName(extraDTO.getName());
+                result.setType(extraDTO.getType());
+            }
+            product.setExtras(extra);
         }
-        product.setExtras(extra);
         return product;
     }
 
