@@ -47,6 +47,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").authenticated() // Protect all API endpoints
                         .anyRequest().permitAll() // Allow other requests (like WebSocket)
                 )
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("default-src https: 'unsafe-eval' 'unsafe-inline'; img-src https: blob: data:;")
+                        )
+                )
                 .httpBasic(httpBasic -> {}); // Use Basic Auth
 
         return http.build();
