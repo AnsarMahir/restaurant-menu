@@ -70,7 +70,7 @@ public class BasicProductServiceImpl implements BasicProductService {
         BasicProduct existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
         CategoryMetadata categoryMetadata = categoryMetadataRepository.findByCategoryName(productDTO.getCategory());
-        existingProduct.setCategory(categoryMetadata.getCategoryName());
+        existingProduct.setCategory(String.valueOf(categoryMetadata.getId()));
         existingProduct.setName(productDTO.getName());
         existingProduct.setDescription(productDTO.getDescription());
         existingProduct.setPrice(productDTO.getPrice());
