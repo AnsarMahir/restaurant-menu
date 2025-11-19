@@ -4,8 +4,10 @@ import com.toticone.restuarant_menu.controller.WebSocketController;
 import com.toticone.restuarant_menu.dto.BasicProductDTO;
 import com.toticone.restuarant_menu.dto.ExtraDTO;
 import com.toticone.restuarant_menu.entity.BasicProduct;
+import com.toticone.restuarant_menu.entity.CategoryMetadata;
 import com.toticone.restuarant_menu.entity.Extra;
 import com.toticone.restuarant_menu.repository.BasicProductRepository;
+import com.toticone.restuarant_menu.repository.CategoryMetadataRepository;
 import com.toticone.restuarant_menu.repository.ExtraRepository;
 import com.toticone.restuarant_menu.service.BasicProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class BasicProductServiceImpl implements BasicProductService {
     @Autowired
     private BasicProductRepository productRepository;
 
+    @Autowired
+    private CategoryMetadataRepository categoryMetadataRepository;
     @Autowired
     private WebSocketController webSocketController;
 
@@ -94,9 +98,18 @@ public class BasicProductServiceImpl implements BasicProductService {
 
     @Override
     public List<BasicProductDTO> getProductsByCategory(String category) {
-        return productRepository.findByCategory(category).stream()
+        CategoryMetadata categoryMetadata = categoryMetadataRepository.findByCategoryName(category);
+        return productRepository.findByCategory(String.valueOf(categoryMetadata.getId())).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void changeCategory(String oldCategory, String newCategory){
+        CategoryMetadata categoryMetadata = categoryMetadataRepository.findByCategoryName(oldCategory);
+        categoryMetadata.setCategoryName(newCategory);
+        categoryMetadataRepository.save(categoryMetadata);
+
     }
 
     @Override
@@ -131,7 +144,7 @@ public class BasicProductServiceImpl implements BasicProductService {
     private BasicProductDTO convertToDTO(BasicProduct product) {
         BasicProductDTO dto = new BasicProductDTO();
         dto.setId(product.getId());
-        dto.setCategory(product.getCategory());
+        dto.setCategory(getCategory(product));
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
@@ -146,6 +159,14 @@ public class BasicProductServiceImpl implements BasicProductService {
         }
 
         return dto;
+    }
+
+    private String getCategory(BasicProduct product) {
+        String category = product.getCategory();
+        int categoryId = Integer.parseInt(category);
+        CategoryMetadata categoryMetadata = categoryMetadataRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
+        return String.valueOf(categoryMetadata.getCategoryName());
+        //using parseInt instead of valueOf coz it retursn integer not int
     }
 
     private BasicProduct convertToEntity(BasicProductDTO dto) {

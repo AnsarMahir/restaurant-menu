@@ -26,6 +26,8 @@ public class ImageUploadController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    private static final String LOGO_NAME = "logo";
+
     @PostMapping("/images")
     public ResponseEntity<String> uploadImage(
             @RequestParam("file") MultipartFile file,
@@ -104,6 +106,105 @@ public class ImageUploadController {
         return filePath.toString();
     }
 
+    @PostMapping("/logo")
+    public ResponseEntity<String> uploadLogo(@RequestParam("file") MultipartFile file) {
+        try {
+            // 1️⃣ Validate file type
+            validateImageFile(file);
+
+            // 2️⃣ Delete existing logo files
+            deleteExistingLogo();
+
+            // 3️⃣ Save new logo with fixed name
+            String filePath = saveLogo(file);
+
+            return ResponseEntity.ok("Logo uploaded successfully: " + filePath);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error uploading logo: " + e.getMessage());
+        }
+    }
+
+    private void deleteExistingLogo() throws IOException {
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            return;
+        }
+
+        // Delete any files that start with "logo."
+        Files.list(uploadPath)
+                .filter(p -> {
+                    String fileName = p.getFileName().toString();
+                    return fileName.startsWith(LOGO_NAME + ".") || fileName.equals(LOGO_NAME);
+                })
+                .forEach(path -> {
+                    try {
+                        Files.delete(path);
+                        System.out.println("Deleted old logo: " + path);
+                    } catch (IOException e) {
+                        System.err.println("Failed to delete old logo: " + path);
+                    }
+                });
+    }
+
+
+    private String saveLogo(MultipartFile file) throws IOException {
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        // Get file extension
+        String extension = file.getOriginalFilename()
+                .substring(file.getOriginalFilename().lastIndexOf("."))
+                .toLowerCase();
+
+        // Save as "logo.extension"
+        String fileName = LOGO_NAME + extension;
+        Path filePath = uploadPath.resolve(fileName);
+
+        // Save the file
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        System.out.println("Saved new logo: " + filePath.toAbsolutePath());
+
+        return filePath.toString();
+    }
+
+    @GetMapping("/logo")
+    public ResponseEntity<Resource> getLogo() {
+        try {
+            Path uploadPath = Paths.get(uploadDir);
+
+            // Find logo file (any extension)
+            Optional<Path> logoPath = Files.list(uploadPath)
+                    .filter(p -> {
+                        String fileName = p.getFileName().toString();
+                        return fileName.startsWith(LOGO_NAME + ".") || fileName.equals(LOGO_NAME);
+                    })
+                    .findFirst();
+
+            if (logoPath.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            Resource resource = new UrlResource(logoPath.get().toUri());
+            String contentType = Files.probeContentType(logoPath.get());
+            if (contentType == null) contentType = "application/octet-stream";
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 
     @GetMapping("/images/{name}")
     public ResponseEntity<Resource> getImage(@PathVariable String name) {
@@ -135,3 +236,5 @@ public class ImageUploadController {
     }
 
 }
+
+

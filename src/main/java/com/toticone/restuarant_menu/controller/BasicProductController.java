@@ -1,12 +1,15 @@
 package com.toticone.restuarant_menu.controller;
 
 import com.toticone.restuarant_menu.dto.BasicProductDTO;
+import com.toticone.restuarant_menu.entity.BasicProduct;
+import com.toticone.restuarant_menu.repository.BasicProductRepository;
 import com.toticone.restuarant_menu.service.BasicProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -16,6 +19,9 @@ public class BasicProductController {
 
     @Autowired
     private BasicProductService productService;
+
+    @Autowired
+    private BasicProductRepository productRepository;
 
     @GetMapping
     public ResponseEntity<List<BasicProductDTO>> getAllProducts() {
@@ -62,4 +68,12 @@ public class BasicProductController {
     public ResponseEntity<BasicProductDTO> removeExtraFromProduct(@PathVariable int productId, @PathVariable int extraId) {
         return ResponseEntity.ok(productService.removeExtraFromProduct(productId, extraId));
     }
+
+    @PostMapping("/category/change")
+    public ResponseEntity<String> changeCategory(@RequestBody String categoryName, @RequestBody String newCategoryName) {
+        productService.changeCategory(categoryName, newCategoryName);
+        return ResponseEntity.ok("Updated category");
+    }
+
+
 }
