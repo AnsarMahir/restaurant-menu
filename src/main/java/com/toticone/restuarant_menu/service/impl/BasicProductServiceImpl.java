@@ -110,7 +110,6 @@ public class BasicProductServiceImpl implements BasicProductService {
         CategoryMetadata categoryMetadata = categoryMetadataRepository.findByCategoryName(oldCategory);
         categoryMetadata.setCategoryName(newCategory);
         categoryMetadataRepository.save(categoryMetadata);
-
     }
 
     @Override

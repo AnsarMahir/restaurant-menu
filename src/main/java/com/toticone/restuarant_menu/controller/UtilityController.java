@@ -15,7 +15,7 @@ public class UtilityController {
     @Autowired
     UtilityService utilityService;
 
-    @GetMapping
+    @PostMapping("/get")
     public ResponseEntity<UtilityInfoDTO> getUtilityInfo(@RequestBody String name) {
     return ResponseEntity.ok(utilityService.getUtilityInfo(name));
     }
