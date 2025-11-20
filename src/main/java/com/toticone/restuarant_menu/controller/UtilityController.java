@@ -27,8 +27,8 @@ public class UtilityController {
         return ResponseEntity.ok(utilityService.createUtility(dto));
     }
 
-    @PutMapping
-    public ResponseEntity<String> updateUtilityInfo(@RequestBody UtilityInfoDTO dto) {
-
-    }
+//    @PutMapping
+//    public ResponseEntity<String> updateUtilityInfo(@RequestBody UtilityInfoDTO dto) {
+//
+//    }
 }
