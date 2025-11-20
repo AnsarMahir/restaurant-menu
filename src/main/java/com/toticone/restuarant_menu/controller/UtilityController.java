@@ -1,6 +1,7 @@
 package com.toticone.restuarant_menu.controller;
 
 import com.toticone.restuarant_menu.dto.UtilityInfoDTO;
+import com.toticone.restuarant_menu.dto.UtilityInfoRequest;
 import com.toticone.restuarant_menu.entity.UtilityInfo;
 import com.toticone.restuarant_menu.repository.UtilityInfoRepository;
 import com.toticone.restuarant_menu.service.UtilityService;
@@ -16,8 +17,8 @@ public class UtilityController {
     UtilityService utilityService;
 
     @PostMapping("/get")
-    public ResponseEntity<UtilityInfoDTO> getUtilityInfo(@RequestBody String name) {
-    return ResponseEntity.ok(utilityService.getUtilityInfo(name));
+    public ResponseEntity<UtilityInfoDTO> getUtilityInfo(@RequestBody UtilityInfoRequest name) {
+    return ResponseEntity.ok(utilityService.getUtilityInfo(name.getName()));
     }
 
     @PostMapping

@@ -15,6 +15,9 @@ public class UtilityServiceImpl implements UtilityService {
     @Override
     public UtilityInfoDTO getUtilityInfo(String name) {
     UtilityInfo utilityInfo = utilityInfoRepository.findByName(name);
+    if  (utilityInfo == null) {
+        return null;
+    }
     return toDTO(utilityInfo);
     }
 
