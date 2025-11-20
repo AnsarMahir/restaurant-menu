@@ -79,6 +79,7 @@ public class BasicProductController {
     @GetMapping("/category/{id}")
     public ResponseEntity<String> getAllProductsByCategory(@PathVariable int id) {
        String categoryName =  productService.getCategory(id);
+       return ResponseEntity.ok(categoryName);
     }
 
 
