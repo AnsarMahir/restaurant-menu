@@ -113,6 +113,12 @@ public class BasicProductServiceImpl implements BasicProductService {
     }
 
     @Override
+    public String getCategory(int id) {
+        CategoryMetadata categoryMetadata = categoryMetadataRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        return categoryMetadata.getCategoryName();
+    }
+
+    @Override
     public BasicProductDTO addExtraToProduct(int productId, int extraId) {
         BasicProduct product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));

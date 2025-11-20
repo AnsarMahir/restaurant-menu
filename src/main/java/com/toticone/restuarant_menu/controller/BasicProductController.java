@@ -76,5 +76,10 @@ public class BasicProductController {
         return ResponseEntity.ok("Updated category");
     }
 
+    @GetMapping("/category/{id}")
+    public ResponseEntity<String> getAllProductsByCategory(@PathVariable int id) {
+       String categoryName =  productService.getCategory(id);
+    }
+
 
 }

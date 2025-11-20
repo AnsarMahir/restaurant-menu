@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/api/utility")
+@RestController
+@RequestMapping("/api/utility")
 public class UtilityController {
     @Autowired
     UtilityService utilityService;
@@ -24,5 +25,10 @@ public class UtilityController {
     @PostMapping
     public ResponseEntity<String> createUtilityInfo(@RequestBody UtilityInfoDTO dto) {
         return ResponseEntity.ok(utilityService.createUtility(dto));
+    }
+
+    @PutMapping
+    public ResponseEntity<String> updateUtilityInfo(@RequestBody UtilityInfoDTO dto) {
+
     }
 }

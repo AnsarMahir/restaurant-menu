@@ -5,7 +5,9 @@ import com.toticone.restuarant_menu.entity.UtilityInfo;
 import com.toticone.restuarant_menu.repository.UtilityInfoRepository;
 import com.toticone.restuarant_menu.service.UtilityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UtilityServiceImpl implements UtilityService {
@@ -16,7 +18,7 @@ public class UtilityServiceImpl implements UtilityService {
     public UtilityInfoDTO getUtilityInfo(String name) {
     UtilityInfo utilityInfo = utilityInfoRepository.findByName(name);
     if  (utilityInfo == null) {
-        return null;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utility not found");
     }
     return toDTO(utilityInfo);
     }
