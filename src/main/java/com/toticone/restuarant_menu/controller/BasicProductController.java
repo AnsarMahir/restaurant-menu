@@ -2,7 +2,11 @@ package com.toticone.restuarant_menu.controller;
 
 import com.toticone.restuarant_menu.dto.BasicProductDTO;
 import com.toticone.restuarant_menu.dto.CategoryChangeRequest;
+import com.toticone.restuarant_menu.dto.CategoryResponse;
+import com.toticone.restuarant_menu.dto.UtilityInfoRequest;
 import com.toticone.restuarant_menu.entity.BasicProduct;
+import com.toticone.restuarant_menu.entity.CategoryMetadata;
+import com.toticone.restuarant_menu.entity.UtilityInfo;
 import com.toticone.restuarant_menu.repository.BasicProductRepository;
 import com.toticone.restuarant_menu.service.BasicProductService;
 import jakarta.validation.Valid;
@@ -71,16 +75,20 @@ public class BasicProductController {
     }
 
     @PostMapping("/category/change")
-    public ResponseEntity<String> changeCategory(@RequestBody CategoryChangeRequest categoryName) {
-        productService.changeCategory(categoryName.getCategoryName(), categoryName.getNewCategoryName());
+    public ResponseEntity<String> changeCategory(@RequestBody CategoryChangeRequest dto) {
+        productService.changeCategory(dto.getCategoryName(), dto.getNewCategoryName());
         return ResponseEntity.ok("Updated category");
     }
 
-    @GetMapping("/category/{id}")
+    @GetMapping("/category/getname/{id}")
     public ResponseEntity<String> getAllProductsByCategory(@PathVariable int id) {
        String categoryName =  productService.getCategory(id);
        return ResponseEntity.ok(categoryName);
     }
 
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryMetadata>> getAllCategories() {
+      return ResponseEntity.ok(productService.getAllCategories());
+    }
 
 }

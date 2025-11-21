@@ -1,7 +1,10 @@
 package com.toticone.restuarant_menu.service;
 
 import com.toticone.restuarant_menu.dto.BasicProductDTO;
-import com.toticone.restuarant_menu.entity.BasicProduct;
+import com.toticone.restuarant_menu.dto.CategoryResponse;
+import com.toticone.restuarant_menu.dto.UtilityInfoRequest;
+import com.toticone.restuarant_menu.entity.CategoryMetadata;
+
 import java.util.List;
 
 public interface BasicProductService {
@@ -16,4 +19,5 @@ public interface BasicProductService {
     List<BasicProductDTO> getProductsByCategory(String category);
     void changeCategory(String oldCategory, String newCategory);
     String getCategory(int id);
+    List<CategoryMetadata> getAllCategories();
 }

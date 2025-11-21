@@ -30,6 +30,22 @@ public class UtilityServiceImpl implements UtilityService {
         return "Utility created successfully";
     }
 
+    @Override
+    public String updateUtility(UtilityInfoDTO dto){
+        UtilityInfo utilityInfo = utilityInfoRepository.findByName(dto.getName());
+        if (utilityInfo == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Utility not found");
+        }
+        if (dto.getSize() != null) {
+            utilityInfo.setSize(dto.getSize());
+        }
+        if (dto.getColor() != null) {
+            utilityInfo.setColor(dto.getColor());
+        }
+        utilityInfoRepository.save(utilityInfo);
+        return "Utility updated successfully";
+    }
+
     private UtilityInfo toEntity(UtilityInfoDTO dto) {
         UtilityInfo utilityInfo = new UtilityInfo();
         utilityInfo.setName(dto.getName());

@@ -2,10 +2,13 @@ package com.toticone.restuarant_menu.service.impl;
 
 import com.toticone.restuarant_menu.controller.WebSocketController;
 import com.toticone.restuarant_menu.dto.BasicProductDTO;
+import com.toticone.restuarant_menu.dto.CategoryResponse;
 import com.toticone.restuarant_menu.dto.ExtraDTO;
+import com.toticone.restuarant_menu.dto.UtilityInfoRequest;
 import com.toticone.restuarant_menu.entity.BasicProduct;
 import com.toticone.restuarant_menu.entity.CategoryMetadata;
 import com.toticone.restuarant_menu.entity.Extra;
+import com.toticone.restuarant_menu.entity.UtilityInfo;
 import com.toticone.restuarant_menu.repository.BasicProductRepository;
 import com.toticone.restuarant_menu.repository.CategoryMetadataRepository;
 import com.toticone.restuarant_menu.repository.ExtraRepository;
@@ -108,6 +111,9 @@ public class BasicProductServiceImpl implements BasicProductService {
     @Override
     public void changeCategory(String oldCategory, String newCategory){
         CategoryMetadata categoryMetadata = categoryMetadataRepository.findByCategoryName(oldCategory);
+        if (categoryMetadata == null) {
+            throw new RuntimeException("Category does not exists");
+        }
         categoryMetadata.setCategoryName(newCategory);
         categoryMetadataRepository.save(categoryMetadata);
     }
@@ -116,6 +122,11 @@ public class BasicProductServiceImpl implements BasicProductService {
     public String getCategory(int id) {
         CategoryMetadata categoryMetadata = categoryMetadataRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
         return categoryMetadata.getCategoryName();
+    }
+
+    @Override
+    public List<CategoryMetadata> getAllCategories(){
+        return categoryMetadataRepository.findAll();
     }
 
     @Override
