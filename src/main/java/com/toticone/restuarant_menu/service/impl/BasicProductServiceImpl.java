@@ -189,7 +189,7 @@ public class BasicProductServiceImpl implements BasicProductService {
     private BasicProduct convertToEntity(BasicProductDTO dto) {
         BasicProduct product = new BasicProduct();
         product.setName(dto.getName());
-        product.setCategory(dto.getCategory());
+        product.setCategory(String.valueOf(categoryMetadataRepository.findByCategoryName(dto.getCategory()).getId()));
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setType(dto.getType());
